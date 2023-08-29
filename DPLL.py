@@ -10,13 +10,13 @@ def DPLL(B, I):
 	L = next(iter(B[0]))
 
 	# Crear B' eliminando cláusulas con L y complementos de L
-	B_true = [clause - {-L} for clause in B if L in clause]
+	_B = [clause - {-L} for clause in B if L in clause]
 	
 	# Crear B'' eliminando cláusulas con complemento de L y L
-	B_false = [clause - {L} for clause in B if -L in clause]
+	_B = [clause - {L} for clause in B if -L in _B]
 
 	# Verificar que el tamaño de B disminuya en cada llamada recursiva
-	if len(B_true) >= len(B) or len(B_false) >= len(B):
+	if len(_B) >= len(B):
 		return False, None
 
 	# Asignar L como verdadero en la asignación parcial I
@@ -24,7 +24,7 @@ def DPLL(B, I):
 	I_true[abs(L)] = True
 
 	# Llamada recursiva con L verdadero
-	result_true, assignment_true = DPLL(B_true, I_true)
+	result_true, assignment_true = DPLL(_B, I_true)
 	if result_true:
 		return True, assignment_true
 
@@ -33,7 +33,7 @@ def DPLL(B, I):
 	I_false[abs(L)] = False
 
 	# Llamada recursiva con L falso
-	result_false, assignment_false = DPLL(B_false, I_false)
+	result_false, assignment_false = DPLL(_B, I_false)
 	if result_false:
 		return True, assignment_false
 
@@ -43,7 +43,7 @@ def DPLL(B, I):
 if __name__ == "__main__":
 	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
 
-	EXPR = "{p},{q},{-p}"
+	EXPR = "{p,-q},{p,r}"
 
 	elements = {}
 	curr_Index = 1
@@ -66,10 +66,10 @@ if __name__ == "__main__":
 			curr_Index += 1
 
 	print(B)
-
+	b = [{-1,-2},{-1,3}]
 	I = {}
 
-	result, assignment = DPLL(B, I)
+	result, assignment = DPLL(b, I)
 
 	if result:
 		print("La fórmula es satisfacible. Asignación parcial:", assignment)
