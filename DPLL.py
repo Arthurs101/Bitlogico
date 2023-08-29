@@ -53,17 +53,23 @@ if __name__ == "__main__":
 	for e in EXPR.split(','):
 		el = e.strip('{}')
 		if el.startswith('-'):
-			if el.strip('-') in elements:
-				elements[el] = -elements[el.strip('-')]
+			if el in elements :
+				B.append({elements[el]})
+			elif el.strip('-') in elements:
 				B.append({-elements[el.strip('-')]})
 			else:
 				elements[el] = -curr_Index
 				B.append({-curr_Index})
 				curr_Index += 1
 		else:
-			elements[el] = curr_Index
-			B.append({curr_Index})
-			curr_Index += 1
+			if el in elements:
+				B.append({elements[el]})
+			elif f"-{el}" in elements:
+				B.append({-elements[f"-{el}"]})
+			else:
+				elements[el] = curr_Index
+				B.append({curr_Index})
+				curr_Index += 1
 
 	print(B)
 	b = [{-1,-2},{-1,3}]
