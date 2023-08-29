@@ -10,13 +10,13 @@ def DPLL(B, I):
     L = next(iter(B[0]))
 
     # Crear B' eliminando cláusulas con L y complementos de L
-    B_true = [clause - {-L} for clause in B if L in clause]
+    _B = [clause - {-L} for clause in B if L in clause]
     
     # Crear B'' eliminando cláusulas con complemento de L y L
-    B_false = [clause - {L} for clause in B if -L in clause]
+    _B = [clause - {L} for clause in B if -L in _B]
 
     # Verificar que el tamaño de B disminuya en cada llamada recursiva
-    if len(B_true) >= len(B) or len(B_false) >= len(B):
+    if len(_B) >= len(B):
         return False, None
 
     # Asignar L como verdadero en la asignación parcial I
@@ -24,27 +24,18 @@ def DPLL(B, I):
     I_true[abs(L)] = True
 
     # Llamada recursiva con L verdadero
-    result_true, assignment_true = DPLL(B_true, I_true)
+    result_true, assignment_true = DPLL(_B, I_true)
     if result_true:
         return True, assignment_true
 
-    # Asignar L como falso en la asignación parcial I
-    I_false = I.copy()
-    I_false[abs(L)] = False
-
-    # Llamada recursiva con L falso
-    result_false, assignment_false = DPLL(B_false, I_false)
-    if result_false:
-        return True, assignment_false
-
     return False, None
 
-# Ejemplo de uso
+
 if __name__ == "__main__":
     # Representación de la fórmula en forma de cláusulas (conjuntos de literales)
     B = [
-        {1},   # Variable 1 representa "p"
-        {-1}   # Complemento de variable 1 representa "-p"
+        {1} ,
+        {-1} 
     ]
     I = {}
 
