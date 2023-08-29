@@ -1,3 +1,5 @@
+elements = {}
+Index = 1
 def DPLL(B, I):
 	if not B:  # Si no hay cláusulas restantes, la fórmula es satisfacible
 		return True, I
@@ -9,48 +11,37 @@ def DPLL(B, I):
 	# Seleccionar una literal L (aquí se selecciona el primer literal de la primera cláusula)
 	L = next(iter(B[0]))
 
-	# Crear B' eliminando cláusulas con L y complementos de L
-	_B = [clause - {-L} for clause in B if L in clause]
-	
-	# Crear B'' eliminando cláusulas con complemento de L y L
-	_B = [clause - {L} for clause in B if -L in _B]
-
-	# Verificar que el tamaño de B disminuya en cada llamada recursiva
-	if len(_B) >= len(B):
-		return False, None
-
+	#asignacion con true
+	# Crear B' eliminando cláusulas con L y complementos de L 
+	_B = [clause for clause in B if abs(L) not in clause]
+	_B = [clause.difference({-abs(L)}) for clause in _B]
 	# Asignar L como verdadero en la asignación parcial I
 	I_true = I.copy()
 	I_true[abs(L)] = True
-
-	# Llamada recursiva con L verdadero
 	result_true, assignment_true = DPLL(_B, I_true)
 	if result_true:
 		return True, assignment_true
-
-	# Asignar L como falso en la asignación parcial I
+	# asignacion con false
+	_B = [clause for clause in B if -abs(L) not in clause]
+	_B = [clause.difference({abs(L)}) for clause in _B]
+	# Asignar L como verdadero en la asignación parcial I
 	I_false = I.copy()
 	I_false[abs(L)] = False
-
-	# Llamada recursiva con L falso
 	result_false, assignment_false = DPLL(_B, I_false)
 	if result_false:
 		return True, assignment_false
-
 	return False, None
-
-# Ejemplo de uso
-if __name__ == "__main__":
-	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
-
-	EXPR = "{p,-q},{p,r}".strip(" ")
-
-	elements = {}
-	curr_Index = 1
-
+def reparse(assignations):
+	tmp = {}
+	for akey,avalue in assignations.items():
+		for key, value in elements.items():
+			if value == akey:
+				tmp[key] = avalue
+				break
+	return tmp
+def parse(expression,Index = len(elements.keys()) + 1):
 	B = []
-
-	for e in EXPR.split('},{'):
+	for e in expression.split('},{'):
 		temp = "{"
 		for el in e.strip('{').strip('}').split(","):
 			if el.startswith('-'):
@@ -59,28 +50,33 @@ if __name__ == "__main__":
 				elif el.strip('-') in elements:
 					temp = temp + str(-elements[el.strip('-')]) + ","
 				else:
-					elements[el] = -curr_Index
-					temp = temp + str(-curr_Index) + ","
-					curr_Index += 1
+					elements[el.replace('-','')] = Index
+					temp = temp + str(-Index) + ","
+					Index += 1
 			else:
 				if el in elements:
 					temp = temp + str(elements[el]) + ","
-				elif f"-{el}" in elements:
-					temp = temp + str(-elements[f"-{el}"]) + ","
 				else:
-					elements[el] = curr_Index
-					temp = temp + str(curr_Index) + ","
-					curr_Index += 1
+					elements[el] = Index
+					temp = temp + str(Index) + ","
+					Index += 1
 		temp = temp[:-1] + "}"
 		B.append(eval(temp))
 
-	print(B)
-	b = [{-1,-2},{-1,3}]
-	I = {}
-
-	result, assignment = DPLL(b, I)
-
-	if result:
-		print("La fórmula es satisfacible. Asignación parcial:", assignment)
-	else:
-		print("La fórmula no es satisfacible.")
+		return B
+# Ejemplo de uso
+if __name__ == "__main__":
+	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
+	EXPRESSIONS = ["{p},{-p}","{q,p,-p}",
+		"{-p,-r,-s},{-q,-p,-s}","{-p,-q},{q,-s},{-p,s},{-q,s}"
+		,"{-p, -q, -r}, {q, -r, p}, {-p, q, r}",
+		"{r}, {-q, -r}, {-p, q, -r}, {q}"]
+	# EXPR = "{-p,-q},{p,-q}".strip(" ")
+	for EXPR in EXPRESSIONS:
+		B = parse(EXPR)
+		I = {}
+		result, assignment = DPLL(B, I)
+		if result:
+			print(f"La fórmula {EXPR} es satisfacible. Asignación parcial: {reparse(assignment)}")
+		else:
+			print(f"La fórmula {EXPR} no es satisfacible.")
