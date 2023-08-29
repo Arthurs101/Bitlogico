@@ -43,7 +43,7 @@ def DPLL(B, I):
 if __name__ == "__main__":
 	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
 
-	EXPR = "{p,-q},{p,r}"
+	EXPR = "{p,-q},{p,r}".strip(" ")
 
 	elements = {}
 	curr_Index = 1
