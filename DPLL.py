@@ -65,7 +65,7 @@ if __name__ == "__main__":
 				B.append({curr_Index})
 				curr_Index += 1
 
-	# print(B)
+	print(B)
 	_b = [{-1,-2},{-1,3}]
 	I = {}
 	result, assignment = DPLL(_b, I)
