@@ -1,55 +1,45 @@
-def evaluar_formula(clausula, asignacion):
-    for literal in clausula:
-        variable = literal[1:]
-        print("literal: ", variable)
-        print("variable: ", variable)
-        negado = literal[0] == '-'
-        
-        if variable not in asignacion:
-            continue
-        
-        valor = asignacion[variable]
-        if (negado and valor == 0) or (not negado and valor == 1):
-            return True
-    
-    return False
+import itertools
 
 def fuerza_bruta(formula):
-    if formula == "":
-        return False, {}
-
-    variables = set()
-    clausulas = formula.split('∧')
+    literales = set()
+    for clausula in formula:
+        for literal in clausula:
+            literales.add(literal[0])
+ 
+    literales = list(literales)
     
-    for clausula in clausulas:
-        clausula = clausula.strip()
-        variables.update(literal[1:] for literal in clausula.split('∨'))
-        variables.update(literal[1:] for literal in clausula.split('∧'))
-        variables.update(literal[1:] for literal in clausula.split('|'))
-    
-    variables = list(variables)
-    
-    for i in range(2 ** len(variables)):
-        asignacion = {variables[j]: (i >> j) & 1 for j in range(len(variables))}
-        satisfactible = True
-        
-        for clausula in clausulas:
-            if not evaluar_formula(clausula.split('∨'), asignacion) and not evaluar_formula(clausula.split('∧'), asignacion) and not evaluar_formula(clausula.split('|'), asignacion):
-                satisfactible = False
-                break
-        
-        if satisfactible:
+    n = len(literales)
+    for valor in itertools.product([True,False], repeat=n):
+        asignacion = set(zip(literales, valor))
+        if all([bool(literal.intersection(asignacion)) for literal in formula]):
             return True, asignacion
+    return False, None
+
+# (p∧¬p)
+formula = [
+    {("p", True)},
+    {("p", False)}
+]
+
+#(p ∨ q ∨ ¬r)
+# formula = [{("p", True)}, 
+#     {("q", True)}, 
+#     {("r", False)}
+# ]
+
+# ¬p
+# formula = [
+#     {("p", False)}
+# ]
+
+
+satisface, asignacion = fuerza_bruta(formula)
+
+print("\n================================\n||        Fuerza Bruta        ||\n================================\n")
+if satisface:
+    print("La formula es satisfacible.")
+    print("Asignacion :", asignacion)
+else:
+    print("La formula no es satisfacible.")
     
-    return False, {}
-
-formulas = ["p∧-p", "p∧-q", "p∨q", "p∨-q", "p|q", ""]
-for formula in formulas:
-    es_satisfactible, asignacion = fuerza_bruta(formula)
-
-    if es_satisfactible:
-        print(f"La fórmula '{formula}' es satisfactible con la asignación:")
-        for variable, valor in asignacion.items():
-            print(f"{variable}: {valor}")
-    else:
-        print(f"La fórmula '{formula}' no es satisfactible.")
+print("\n================================\n")
