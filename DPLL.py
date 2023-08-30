@@ -66,15 +66,19 @@ def parse(expression):
 
 	return B
 # Ejemplo de uso
+elements = {"p" : 1, "q" : 2 ,"r": 3,"s" : 4}
 if __name__ == "__main__":
 	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
 	EXPRESSIONS = ["{p},{-p}","{q,p,-p}",
 		"{-p,-r,-s},{-q,-p,-s}","{-p,-q},{q,-s},{-p,s},{-q,s}"
 		,"{-p, -q, -r}, {q, -r, p}, {-p, q, r}",
 		"{r}, {-q, -r}, {-p, q, -r}, {q}"]
+	Transforms = [[{1}, {-1}],[{2, 1, -1}],[{-1, -3, -4}, {-1, -2, -4}],[{-1, -2}, {2, -4}, {-1, 4}, {-2, 4}],
+	       [{-1,-2,-3},{2,-3,1},{-1,2,3}],[{3},{-2,-3},{-1,2,-3},{2}]]
 	# EXPR = "{-p,-q},{p,-q}".strip(" ")
 	for EXPR in EXPRESSIONS:
-		B = parse(EXPR)
+		# B = parse(EXPR)
+		B = Transforms[EXPRESSIONS.index(EXPR)]
 		I = {}
 		result, assignment = DPLL(B, I)
 		if result:
