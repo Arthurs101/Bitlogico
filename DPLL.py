@@ -39,7 +39,8 @@ def reparse(assignations):
 				tmp[key] = avalue
 				break
 	return tmp
-def parse(expression,Index = len(elements.keys()) + 1):
+def parse(expression):
+	Index = len(elements.keys()) + 1
 	B = []
 	for e in expression.split('},{'):
 		temp = "{"
