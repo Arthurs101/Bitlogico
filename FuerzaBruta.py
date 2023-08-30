@@ -1,19 +1,19 @@
 import itertools
 
 def fuerza_bruta(formula):
-    literales = set()
-    for clausula in formula:
-        for literal in clausula:
-            literales.add(literal[0])
- 
-    literales = list(literales)
-    
-    n = len(literales)
-    for valor in itertools.product([True,False], repeat=n):
-        asignacion = set(zip(literales, valor))
-        if all([bool(literal.intersection(asignacion)) for literal in formula]):
-            return True, asignacion
-    return False, None
+	literales = set()
+	for clausula in formula:
+		for literal in clausula:
+			literales.add(literal[0])
+
+	literales = list(literales)
+	
+	n = len(literales)
+	for valor in itertools.product([True,False], repeat=n):
+		asignacion = set(zip(literales, valor))
+		if all([bool(literal.intersection(asignacion)) for literal in formula]):
+			return True, asignacion
+	return False, None
 
 # (p∧¬p)
 Formula1= [set({('p', True)}), set({('p', False)})]
@@ -27,14 +27,23 @@ Formula6 = [set({('r', True)}), set({('q', False), ('r', False)}), set({('r', Fa
 formulas = [Formula1,Formula2,Formula3,Formula4,Formula5,Formula6]
 
 
-print("\n================================\n||        Fuerza Bruta        ||\n================================\n")
 for formula in formulas:
-    print(formula)
-    satisface, asignacion = fuerza_bruta(formula)
-    if satisface:
-        print("La formula es satisfacible.")
-        print("Asignacion :", asignacion)
-    else:
-        print("La formula no es satisfacible.")
-        
-    print("\n================================\n")
+	satisface, asignacion = fuerza_bruta(formula)
+
+	result = []
+	temp = ""
+	for item in formula:
+		temp += "{"
+		for var, value in item:
+			if value:
+				temp += f"{var},"
+			else:
+				temp += f"-{var},"
+		temp = temp[:-1]
+		temp += "},"
+	result.append(temp[:-1])
+
+	if satisface:
+		print(f"{result} La formula es satisfacible. Asignacion :", asignacion)
+	else:
+		print(f"{result} La formula no es satisfacible.")
