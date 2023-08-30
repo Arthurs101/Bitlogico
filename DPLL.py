@@ -5,7 +5,7 @@ def DPLL(B, I):
 		return True, I
 	
 	for clause in B:
-		if not clause:  # Si alguna cláusula está vacía, la fórmula no es satisfacible
+		if not clause or len(clause) == 0:  # Si alguna cláusula está vacía, la fórmula no es satisfacible
 			return False, None
 	
 	# Seleccionar una literal L (aquí se selecciona el primer literal de la primera cláusula)
@@ -63,7 +63,7 @@ def parse(expression,Index = len(elements.keys()) + 1):
 		temp = temp[:-1] + "}"
 		B.append(eval(temp))
 
-		return B
+	return B
 # Ejemplo de uso
 if __name__ == "__main__":
 	# Representación de la fórmula en forma de cláusulas (conjuntos de literales)
